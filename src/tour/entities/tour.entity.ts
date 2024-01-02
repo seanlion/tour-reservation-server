@@ -1,12 +1,15 @@
+import { Reservation } from 'src/reservation/entities/reservation.entity';
 import { Seller } from '../../seller/entities/seller.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Dayoff } from 'src/dayoff/entities/dayoff.entity';
 
 @Entity({ name: 'tours' })
 export class Tour {
@@ -31,6 +34,12 @@ export class Tour {
   seller?: Seller;
 
   // reservation >--o tour
+  @OneToMany(() => Reservation, (reservation) => reservation.tour, {
+    nullable: false,
+  })
+  reservations: Reservation[];
 
   // dayoff >--o tour
+  @OneToMany(() => Dayoff, (dayoff) => dayoff.tour)
+  public dayoffs: Dayoff[];
 }
