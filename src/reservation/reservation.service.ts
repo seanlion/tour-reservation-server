@@ -58,7 +58,7 @@ export class ReservationService {
               reservationDate: registerDto.reservation_date,
             }) && reservation.status === ReservationStatus.APPROVED,
         );
-        if (alreadyExistingReserv) {
+        if (alreadyExistingReserv.length > 0) {
           throw new AlreadyExistingReservationException();
         }
       }
