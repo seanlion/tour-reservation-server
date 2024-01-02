@@ -9,6 +9,7 @@ import {
   ReservationCancelDto,
   ReservationCheckDto,
   ReservationRegisterDto,
+  ReservationStatusDto,
   ReservationUpdateDto,
 } from './dto/reservation.dto';
 import { ReservationRepository } from './reservation.repository';
@@ -41,7 +42,7 @@ export class ReservationService {
   async registerReservation(
     tourId: number,
     registerDto: ReservationRegisterDto,
-  ): Promise<boolean> {
+  ): Promise<ReservationStatusDto> {
     try {
       // find부터 insert 까지 트랜잭션 필요할 수 있음.
       const tour =
@@ -67,7 +68,7 @@ export class ReservationService {
       }
       // PENDING이면 uuid 없이 Reservation 엔티티 삽입
       await this.reservationRepository.createReservation(payload);
-      return true;
+      return ReservationStatusDto.from(checkedData.status, payload.uuid);
     } catch (error) {
       this.logger.error(
         `ReservationService:registerReservation: ${JSON.stringify(
@@ -115,7 +116,7 @@ export class ReservationService {
   async approveReservation(
     reservationId: number,
     approveDto: ReservationApproveDto,
-  ): Promise<boolean> {
+  ): Promise<ReservationStatusDto> {
     try {
       // reservation 엔티티 업데이트해서 상태 변경
       const reservation = await this.reservationRepository.findOneByCondition({
@@ -146,7 +147,10 @@ export class ReservationService {
         updatePayload,
         ['status', 'uuid'],
       );
-      return true;
+      return ReservationStatusDto.from(
+        updatePayload.status,
+        updatePayload.uuid,
+      );
     } catch (error) {
       this.logger.error(
         `ReservationService:approveReservation: ${JSON.stringify(

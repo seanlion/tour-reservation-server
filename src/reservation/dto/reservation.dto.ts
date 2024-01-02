@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import { ReservationStatus } from '../types/status_enum';
 import { Reservation } from '../entities/reservation.entity';
 import { pick } from 'lodash';
@@ -81,5 +81,22 @@ export class ReservationCheckDto {
   static emtpyValue(): ReservationCheckDto {
     const reservationDto = new ReservationCheckDto();
     return reservationDto;
+  }
+}
+
+export class ReservationStatusDto {
+  @IsString()
+  token?: string;
+
+  @IsEnum(ReservationStatus)
+  status: ReservationStatus;
+
+  static from(status: ReservationStatus, token?: string): ReservationStatusDto {
+    const statusDto = new ReservationStatusDto();
+    if (token) {
+      statusDto.token = token;
+    }
+    statusDto.status = status;
+    return statusDto;
   }
 }

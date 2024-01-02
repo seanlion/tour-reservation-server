@@ -4,6 +4,7 @@ import {
   ReservationCancelDto,
   ReservationCheckDto,
   ReservationRegisterDto,
+  ReservationStatusDto,
   ReservationUpdateDto,
 } from './dto/reservation.dto';
 import { ReservationService } from './reservation.service';
@@ -16,7 +17,7 @@ export class ReservationController {
   async registerReservation(
     @Param('tourId') tourId: number,
     @Body() registerDto: ReservationRegisterDto,
-  ): Promise<boolean> {
+  ): Promise<ReservationStatusDto> {
     return await this.reservationService.registerReservation(
       tourId,
       registerDto,
@@ -27,7 +28,7 @@ export class ReservationController {
   async approveReservation(
     @Param('reservationId') reservationId: number,
     @Body() approveDto: ReservationApproveDto,
-  ): Promise<boolean> {
+  ): Promise<ReservationStatusDto> {
     return await this.reservationService.approveReservation(
       reservationId,
       approveDto,
