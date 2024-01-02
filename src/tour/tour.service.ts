@@ -150,45 +150,56 @@ export class TourService {
         1.휴일이 아니어야함.
         2.해당 일에 예약이 5개 미만이어야 함.
     */
-    const tour = await this.tourRepository.findOneByCondition({
-      relations: {
-        seller: true,
-        dayoffs: true,
-        reservations: true,
-      },
-      where: {
-        seller: {
-          name: sellerName,
+    try {
+      const tour = await this.tourRepository.findOneByCondition({
+        relations: {
+          seller: true,
+          dayoffs: true,
+          reservations: true,
         },
-        id: tourId,
-        // TODO: 여기서 바로 dayoff를 필터링 가능?
-      },
-    });
-    // 선택한 연도와 월을 가지고, 그 월의 (그 tour의) dayoff를 가지고 와야 함.
-    /*
-        예를 들어 2023년 3월이 인자이면,
-        2023.03의 모든 날짜를 구한다.(30개인지, 31개인지)
-        month가 3인 dayoff 데이터들을 가지고 오고, 
-        만약 데이터가 3개 있다.
-        1. dayOfWeek : 0(Sun), 6(Sat)
-        2. date: 16일
-
-        이러면 2023.03의 TourAvailableSchedule은 
-        일요일과, 토요일을 제외하고, 16일을 제외한 3월의 모든 일자를 리턴해야 함.
-     */
-    const dates = getAllDatesInGivenMonth(year, month);
-    const dayoffsOfMonth = tour.dayoffs.filter((off) => off.month === month);
-    const tourAvailableSchedule = dates.reduce((availDates: number[], date) => {
-      return dayoffsOfMonth.every((off) => off.checkDayoff(date))
-        ? availDates
-        : [...availDates, date.getDate()];
-    }, []);
-    return TourAvailableScheduleDto.from(
-      tour,
-      year,
-      month,
-      tourAvailableSchedule,
-    );
-    // TODO : 3월의 예약 5개 이상인 날을 보고, 그 날들을 제외해야 함.
+        where: {
+          seller: {
+            name: sellerName,
+          },
+          id: tourId,
+          // TODO: 여기서 바로 dayoff를 필터링 가능?
+        },
+      });
+      // 선택한 연도와 월을 가지고, 그 월의 (그 tour의) dayoff를 가지고 와야 함.
+      /*
+           예를 들어 2023년 3월이 인자이면,
+           2023.03의 모든 날짜를 구한다.(30개인지, 31개인지)
+           month가 3인 dayoff 데이터들을 가지고 오고, 
+           만약 데이터가 3개 있다.
+           1. dayOfWeek : 0(Sun), 6(Sat)
+           2. date: 16일
+   
+           이러면 2023.03의 TourAvailableSchedule은 
+           일요일과, 토요일을 제외하고, 16일을 제외한 3월의 모든 일자를 리턴해야 함.
+        */
+      const dates = getAllDatesInGivenMonth(year, month);
+      const dayoffsOfMonth = tour.dayoffs.filter((off) => off.month === month);
+      const tourAvailableSchedule = dates.reduce(
+        (availDates: number[], date) => {
+          return dayoffsOfMonth.every((off) => off.checkDayoff(date))
+            ? availDates
+            : [...availDates, date.getDate()];
+        },
+        [],
+      );
+      return TourAvailableScheduleDto.from(
+        tour,
+        year,
+        month,
+        tourAvailableSchedule,
+      );
+      // TODO : 3월의 예약 5개 이상인 날을 보고, 그 날들을 제외해야 함.
+    } catch (error) {
+      this.logger.error(
+        `TourService:fetchAvailableScheduleByTour(
+                        : ${JSON.stringify(error.message)}`,
+      );
+      throw new InternalServerErrorException();
+    }
   }
 }
