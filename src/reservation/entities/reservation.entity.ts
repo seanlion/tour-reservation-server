@@ -48,7 +48,7 @@ export class Reservation {
   username: string;
 
   // 고객 전화번호
-  @Column()
+  @Column({ unique: true })
   phoneNumber: string;
 
   @ManyToOne(() => Tour, (tour) => tour.reservations, {
