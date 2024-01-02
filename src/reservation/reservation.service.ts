@@ -21,7 +21,7 @@ import {
   getCurrentOnlyDateFormat,
   parseDateFromDateString,
 } from './utils/date';
-import { NotAvailableScheduleException } from '../exception/notAvailableScheduleException';
+import { NotAvailableScheduleException } from '../exception/NotAvailableScheduleException';
 import { AUTO_APPROVED_COUNT } from './constant';
 import { v4 as uuidv4 } from 'uuid';
 import { ReservationPayload } from './types/payload';
