@@ -86,7 +86,6 @@ export class TourService {
       if (tour.seller.name !== addDayoffDto.sellerName) {
         throw new UnauthorizedException();
       }
-      // TODO : dayoff가 추가되면 availableSchedule 캐싱 데이터 갱신해야함.
       await this.dayOffService.createDayOff(addDayoffDto, tour);
       await this.updateAvailableScheduleCache(
         addDayoffDto.sellerName,
@@ -244,7 +243,6 @@ export class TourService {
             name: sellerName,
           },
           id: tourId,
-          // TODO: 여기서 바로 dayoff를 필터링 가능?
         },
       });
       const tourAvailableSchedule = this.calculateAvailableSchedule(

@@ -49,7 +49,6 @@ export class TourDto {
     if (tour.dayoffs) {
       tourDto.dayoffs = tour.dayoffs.map((off) => DayoffDto.from(off));
     }
-    // TODO: reservation도 추가.
     if (availableSchedule) {
       tourDto.availableSchedulesByMonth = availableSchedule;
     }
