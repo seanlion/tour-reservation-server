@@ -4,6 +4,21 @@ volumes:
   mysqldb : {}
 
 services:  
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./:/app/"
+    depends_on:
+      - mysql
+      - redis
+    command: npm run start:dev
+  
   redis:
     image: redis:alpine
     restart: always
