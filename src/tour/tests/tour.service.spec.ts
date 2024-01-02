@@ -11,12 +11,15 @@ import { DayoffService } from '../../dayoff/dayoff.service';
 import { createDayoffFixture } from './dayoff.fixture';
 import { DayoffType } from '../../dayoff/types/dayoff_type';
 import { getAllDatesInGivenMonth } from '../utils/util';
+import { getRedisToken } from '@liaoliaots/nestjs-redis';
 
 describe('TourService', () => {
   let tourService: TourService;
   let mockTourRepository;
   let mockSellerService;
   let mockDayoffService;
+  const redisGet = jest.fn();
+  const redisSet = jest.fn();
 
   beforeEach(async () => {
     mockTourRepository = {
@@ -35,6 +38,13 @@ describe('TourService', () => {
         { provide: TourRepository, useValue: mockTourRepository },
         { provide: SellerService, useValue: mockSellerService },
         { provide: DayoffService, useValue: mockDayoffService },
+        {
+          provide: getRedisToken('default'),
+          useValue: {
+            get: redisGet,
+            set: redisSet,
+          },
+        },
       ],
     }).compile();
 
@@ -121,8 +131,9 @@ describe('TourService', () => {
     it('should successfully add a dayoff', async () => {
       const testTour = createTourFixture();
       const testDayoffs = createDayoffFixture();
-      mockTourRepository.findById.mockResolvedValue(testTour);
+      mockTourRepository.findOneByCondition.mockResolvedValue(testTour);
       mockDayoffService.createDayOff.mockResolvedValue(testDayoffs);
+      redisSet.mockResolvedValue('OK');
       // addDayoffDto 필요
       const addDayoffDto = {
         sellerName: testTour.seller.name,

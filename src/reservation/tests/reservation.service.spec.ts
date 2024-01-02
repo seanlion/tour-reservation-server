@@ -77,10 +77,10 @@ describe('ReservationService', () => {
       reservationRepository.createReservation.mockResolvedValue(
         mockReservation,
       );
-
+    const result = await reservationService.registerReservation(tour.id, registerDto);
       expect(
-        await reservationService.registerReservation(tour.id, registerDto),
-      ).toBe(true);
+        result.status
+      ).toBe(ReservationStatus.APPROVED);
       expect(
         tourService.findTourWithReservationsAndDayoffs,
       ).toHaveBeenCalledWith(tour.id);
@@ -101,7 +101,6 @@ describe('ReservationService', () => {
       ).rejects.toThrow(InternalServerErrorException);
     });
 
-    // TODO: NotAvailableSchedule
     it('should throw NotAvailableScheduleException if the schedule is not available', async () => {
       const registerDto = createReservationRegisterDtoFixture();
       const tour = createTourFixture();
@@ -147,7 +146,7 @@ describe('ReservationService', () => {
         mockReservation.id,
         approveDto,
       );
-      expect(result).toBe(true);
+      expect(result.status).toBe(ReservationStatus.APPROVED);
       expect(reservationRepository.findOneByCondition).toHaveBeenCalledWith({
         relations: { tour: { seller: true } },
         where: { id: mockReservation.id },
