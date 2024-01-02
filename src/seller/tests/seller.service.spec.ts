@@ -28,8 +28,6 @@ describe('SellerService', () => {
     repository = module.get<SellerRepository>(SellerRepository);
   });
 
-  // ... 이전 테스트 케이스 ...
-
   describe('registerSeller', () => {
     it('should successfully register a seller', async () => {
       const registerDto = { name: 'Testee' };
