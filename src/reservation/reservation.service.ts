@@ -30,6 +30,7 @@ import { AlreadyApprovedException } from '../exception/AlreadyApprovedException'
 import { Reservation } from './entities/reservation.entity';
 import { AlreadyCanceledException } from '../exception/AlreadyCanceledException';
 import { CannotCanceledException } from '../exception/CannotCanceledException';
+import { AlreadyExistingReservationException } from 'src/exception/AlreadyExistingReservationException';
 
 @Injectable()
 export class ReservationService {
@@ -47,6 +48,20 @@ export class ReservationService {
       // find부터 insert 까지 트랜잭션 필요할 수 있음.
       const tour =
         await this.tourService.findTourWithReservationsAndDayoffs(tourId);
+
+      if (tour.reservations) {
+        const alreadyExistingReserv = tour.reservations.filter(
+          (reservation) =>
+            this.validateUserInfo(reservation, {
+              username: registerDto.username,
+              phoneNumber: registerDto.phoneNumber,
+              reservationDate: registerDto.reservation_date,
+            }) && reservation.status === ReservationStatus.APPROVED,
+        );
+        if (alreadyExistingReserv) {
+          throw new AlreadyExistingReservationException();
+        }
+      }
       const checkedData = this.checkGivenDateAvailableForReservation(
         registerDto.reservation_date,
         tour,
@@ -75,7 +90,10 @@ export class ReservationService {
           error.message,
         )}`,
       );
-      if (error instanceof NotAvailableScheduleException) {
+      if (
+        error instanceof NotAvailableScheduleException ||
+        error instanceof AlreadyExistingReservationException
+      ) {
         throw error;
       }
       throw new InternalServerErrorException();
