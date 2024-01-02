@@ -26,13 +26,13 @@ export class TourDto {
 
   // available schedule이 있어야 함.
   @IsNumber({}, { each: true })
-  availableSchedulesByMonth: number[];
+  availableSchedulesByMonth?: number[];
 
   // 휴일 정보가 있어야 함.
   @IsObject()
   @ValidateNested()
   @Type(() => DayoffDto)
-  dayoffs: DayoffDto[];
+  dayoffs?: DayoffDto[];
 
   static from(tour: Tour, availableSchedule?: number[]): TourDto {
     const tourDto = new TourDto();
