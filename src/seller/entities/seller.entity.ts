@@ -1,7 +1,9 @@
+import { Tour } from '../../tour/entities/tour.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -19,4 +21,7 @@ export class Seller {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => Tour, (tour) => tour.seller, { nullable: false })
+  tour: Tour[];
 }
