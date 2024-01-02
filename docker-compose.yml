@@ -22,7 +22,8 @@ services:
   redis:
     image: redis:alpine
     restart: always
-    hostname: redis
+    container_name: redisnew
+    hostname: redisnew
     ports:
       - "6379:6379"
     environment:

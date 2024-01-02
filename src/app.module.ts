@@ -7,7 +7,7 @@ import { TourModule } from './tour/tour.module';
 import { DayoffModule } from './dayoff/dayoff.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 
 @Module({
   imports: [
@@ -22,32 +22,29 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
-        host: 'localhost',
+        host: config.get<string>('DATABASE_HOST'),
         port: parseInt(config.get('DATABASE_PORT') ?? '3306'),
-        username: 'zoom',
-        password: 'root',
-        database: 'tour',
+        username: config.get<string>('DATABASE_USERNAME'),
+        password: config.get<string>('DATABASE_PASSWORD'),
+        database: config.get<string>('DATABASE_NAME'),
         entities: [__dirname + '/**/*.entity.{js,ts}'],
-        synchronize: false,
+        synchronize: true,
         logging: true,
       }),
     }),
-    // RedisModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: (config: ConfigService) => ({
-    //     host: 'localhost',
-    //     port: 6379,
-    //     password: 'zoom',
-    //     readyLog: true,
-    //   }),
-    // }),
-    RedisModule.forRoot({
-      readyLog: true,
-      config: {
-        host: 'localhost',
-        port: 6379,
-        password: 'zoom',
+    RedisModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (
+        config: ConfigService,
+      ): Promise<RedisModuleOptions> => {
+        return {
+          config: {
+            host: config.get<string>('REDIS_HOST'),
+            port: parseInt(config.get<string>('REDIS_PORT')),
+            password: config.get<string>('REDIS_PASSWORD'),
+          },
+          readyLog: true,
+        };
       },
     }),
     SellerModule,
