@@ -15,6 +15,7 @@ import { TourNotFoundException } from '../exception/TourNotFoundException';
 import { DayoffCreateDto } from '../dayoff/dto/dayoff.dto';
 import { DayoffService } from '../dayoff/dayoff.service';
 import { getAllDatesInGivenMonth } from './utils/util';
+import { Tour } from './entities/tour.entity';
 
 @Injectable()
 export class TourService {
@@ -87,6 +88,27 @@ export class TourService {
       } else if (error instanceof UnauthorizedException) {
         throw error;
       }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async findTourWithReservationsAndDayoffs(tourId: number): Promise<Tour> {
+    try {
+      const tour = await this.tourRepository.findOneByCondition({
+        relations: {
+          reservations: true,
+          dayoffs: true,
+        },
+        where: {
+          id: tourId,
+        },
+      });
+      return tour;
+    } catch (error) {
+      this.logger.error(
+        `TourService:fetchToursBySeller(
+                    : ${JSON.stringify(error.message)}`,
+      );
       throw new InternalServerErrorException();
     }
   }

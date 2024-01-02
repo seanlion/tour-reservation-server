@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Generated,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,9 +14,8 @@ export class Reservation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'reservation_uuid', unique: true })
-  @Generated('uuid')
-  uuid: string;
+  @Column({ name: 'reservation_uuid', unique: true, nullable: true })
+  uuid?: string;
 
   @Column({
     type: 'enum',
@@ -27,8 +25,17 @@ export class Reservation {
   })
   status: ReservationStatus;
 
-  @Column({ name: 'date', type: 'date' })
-  date: string;
+  @Column({ name: 'reservation_date' })
+  reservationDate: string;
+
+  @Column()
+  year: number;
+
+  @Column()
+  month: number;
+
+  @Column()
+  date: number;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
