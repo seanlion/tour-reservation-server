@@ -179,8 +179,7 @@ export class TourService {
       return tours.map((tour) => TourDto.from(tour));
     } catch (error) {
       this.logger.error(
-        `TourService:fetchToursBySeller(
-                    : ${JSON.stringify(error.message)}`,
+        `TourService:fetchToursBySeller : ${JSON.stringify(error.message)}`,
       );
       throw new InternalServerErrorException();
     }
