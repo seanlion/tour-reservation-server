@@ -1,16 +1,20 @@
 import { IsNumber, IsString } from 'class-validator';
 import { Seller } from '../entities/seller.entity';
 import { pick } from 'lodash';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class SellerRegisterDto {
+  @ApiProperty()
   @IsString()
   name: string;
 }
 
 export class SellerDto {
+  @ApiProperty()
   @IsNumber()
   id: number;
 
+  @ApiProperty()
   @IsString()
   name: string;
 

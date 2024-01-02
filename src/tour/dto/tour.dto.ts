@@ -3,32 +3,40 @@ import { pick } from 'lodash';
 import { DayoffDto } from '../../dayoff/dto/dayoff.dto';
 import { Type } from 'class-transformer';
 import { Tour } from '../entities/tour.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class TourCreateDto {
+  @ApiProperty()
   @IsString()
   title: string;
 
+  @ApiProperty()
   @IsString()
   sellerName: string;
 }
 
 export class TourDto {
+  @ApiProperty()
   @IsNumber()
   id: number;
 
+  @ApiProperty()
   @IsString()
   sellerName: string;
 
+  @ApiProperty()
   @IsString()
   title: string;
 
   // TODO: 고객 예약 리스트가 있어야 함.
 
   // available schedule이 있어야 함.
+  @ApiProperty()
   @IsNumber({}, { each: true })
   availableSchedulesByMonth?: number[];
 
   // 휴일 정보가 있어야 함.
+  @ApiProperty()
   @IsObject()
   @ValidateNested()
   @Type(() => DayoffDto)
@@ -50,10 +58,19 @@ export class TourDto {
 }
 
 export class TourAvailableScheduleDto {
+  @ApiProperty()
   tourId: number;
+
+  @ApiProperty()
   tourTitle: string;
+
+  @ApiProperty()
   year: number;
+
+  @ApiProperty()
   month: number;
+
+  @ApiProperty()
   availableSchedule: number[];
 
   static from(

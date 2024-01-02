@@ -8,11 +8,14 @@ import {
   ReservationUpdateDto,
 } from './dto/reservation.dto';
 import { ReservationService } from './reservation.service';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Reservation')
 @Controller('/reservation')
 export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
+  @ApiOperation({ description: 'Endpoint requesting the reservation.' })
   @Post('/:tourId/register')
   async registerReservation(
     @Param('tourId') tourId: number,
@@ -24,6 +27,7 @@ export class ReservationController {
     );
   }
 
+  @ApiOperation({ description: 'Seller approves requested reservation' })
   @Post('/:tourId/:reservationId/approve')
   async approveReservation(
     @Param('reservationId') reservationId: number,
@@ -35,6 +39,7 @@ export class ReservationController {
     );
   }
 
+  @ApiOperation({ description: 'Cancel requested reservation' })
   @Post('/:tourId/:reservationId/cancel')
   async cancelReservation(
     @Param('reservationId') reservationId: number,
@@ -46,6 +51,7 @@ export class ReservationController {
     );
   }
 
+  @ApiOperation({ description: 'Get reservation status based on token' })
   @Post('/check')
   async fetchReservationByToken(
     @Body() checkDto: ReservationCheckDto,
@@ -53,6 +59,7 @@ export class ReservationController {
     return await this.reservationService.fetchReservationByToken(checkDto);
   }
 
+  @ApiOperation({ description: 'Update the reservation' })
   @Post('/:tourId/:reservationId/update')
   async updateReservation(
     @Param('tourId') tourId: number,
