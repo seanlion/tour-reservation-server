@@ -15,18 +15,18 @@ export class ReservationRegisterDto {
 }
 
 export class ReservationUpdateDto {
-    @IsString()
-    username: string;
-  
-    @IsString()
-    phoneNumber: string;
-  
-    @IsString()
-    original_reservation_date: string; // 2023-02-02 형태
+  @IsString()
+  username: string;
 
-    @IsString()
-    update_reservation_date: string; // 2023-02-02 형태
-  }
+  @IsString()
+  phoneNumber: string;
+
+  @IsString()
+  original_reservation_date: string; // 2023-02-02 형태
+
+  @IsString()
+  update_reservation_date: string; // 2023-02-02 형태
+}
 
 export class ReservationApproveDto {
   @IsString()
