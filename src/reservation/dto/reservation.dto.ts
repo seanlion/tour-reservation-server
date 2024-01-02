@@ -77,4 +77,9 @@ export class ReservationCheckDto {
     });
     return reservationDto;
   }
+
+  static emtpyValue(): ReservationCheckDto {
+    const reservationDto = new ReservationCheckDto();
+    return reservationDto;
+  }
 }

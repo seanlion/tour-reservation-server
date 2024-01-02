@@ -254,6 +254,9 @@ export class ReservationService {
           uuid: checkDto.token,
         },
       });
+      if (!reservation) {
+        return ReservationCheckDto.emtpyValue();
+      }
       if (reservation.tour.seller.name !== checkDto.sellerName) {
         throw new UnauthorizedException();
       }
