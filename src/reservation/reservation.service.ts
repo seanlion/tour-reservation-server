@@ -12,23 +12,23 @@ import {
   ReservationUpdateDto,
 } from './dto/reservation.dto';
 import { ReservationRepository } from './reservation.repository';
-import { TourService } from 'src/tour/tour.service';
+import { TourService } from '../tour/tour.service';
 import { ReservationStatus } from './types/status_enum';
-import { Tour } from 'src/tour/entities/tour.entity';
+import { Tour } from '../tour/entities/tour.entity';
 import {
   calculateDateDiff,
   getCurrentOnlyDateFormat,
   parseDateFromDateString,
 } from './utils/date';
-import { NotAvailableScheduleException } from 'src/exception/notAvailableScheduleException';
+import { NotAvailableScheduleException } from '../exception/notAvailableScheduleException';
 import { AUTO_APPROVED_COUNT } from './constant';
 import { v4 as uuidv4 } from 'uuid';
 import { ReservationPayload } from './types/payload';
-import { ReservationNotFoundException } from 'src/exception/ReservationNotFoundException';
-import { AlreadyApprovedException } from 'src/exception/AlreadyApprovedException';
+import { ReservationNotFoundException } from '../exception/ReservationNotFoundException';
+import { AlreadyApprovedException } from '../exception/AlreadyApprovedException';
 import { Reservation } from './entities/reservation.entity';
-import { AlreadyCanceledException } from 'src/exception/AlreadyCanceledException';
-import { CannotCanceledException } from 'src/exception/CannotCanceledException';
+import { AlreadyCanceledException } from '../exception/AlreadyCanceledException';
+import { CannotCanceledException } from '../exception/CannotCanceledException';
 
 @Injectable()
 export class ReservationService {
@@ -46,7 +46,6 @@ export class ReservationService {
       // find부터 insert 까지 트랜잭션 필요할 수 있음.
       const tour =
         await this.tourService.findTourWithReservationsAndDayoffs(tourId);
-
       const checkedData = this.checkGivenDateAvailableForReservation(
         registerDto.reservation_date,
         tour,
