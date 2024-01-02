@@ -1,4 +1,4 @@
-import { FindManyOptions, FindOneOptions, FindOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tour } from './entities/tour.entity';
 import { TourCreateDto, TourDto } from './dto/tour.dto';
