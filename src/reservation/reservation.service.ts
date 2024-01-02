@@ -30,7 +30,7 @@ import { AlreadyApprovedException } from '../exception/AlreadyApprovedException'
 import { Reservation } from './entities/reservation.entity';
 import { AlreadyCanceledException } from '../exception/AlreadyCanceledException';
 import { CannotCanceledException } from '../exception/CannotCanceledException';
-import { AlreadyExistingReservationException } from 'src/exception/AlreadyExistingReservationException';
+import { AlreadyExistingReservationException } from '../exception/AlreadyExistingReservationException';
 
 @Injectable()
 export class ReservationService {
