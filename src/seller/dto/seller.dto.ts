@@ -20,3 +20,7 @@ export class SellerDto {
     return sellerDto;
   }
 }
+
+export class SellerPayload {
+  name: string;
+}

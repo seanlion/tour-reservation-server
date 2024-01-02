@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seller } from './entities/seller.entity';
 import { SellerRegisterDto, SellerDto } from './dto/seller.dto';
@@ -21,6 +21,12 @@ export class SellerRepository extends Repository<Seller> {
 
   public async findById(id: number): Promise<Seller | null> {
     return this.findOneBy({ id: id });
+  }
+
+  public async findByCondition(
+    condition: FindOneOptions<Seller>,
+  ): Promise<Seller | null> {
+    return this.findOne(condition);
   }
 
   public async registerSeller(sellerDto: SellerRegisterDto): Promise<Seller> {

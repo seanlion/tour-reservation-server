@@ -3,9 +3,10 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { SellerRegisterDto, SellerDto } from './dto/seller.dto';
+import { SellerRegisterDto, SellerDto, SellerPayload } from './dto/seller.dto';
 import { SellerRepository } from './seller.repository';
 import { SellerNotFoundException } from '../exception/SellerNotFoundException';
+import { Seller } from './entities/seller.entity';
 
 @Injectable()
 export class SellerService {
@@ -55,6 +56,28 @@ export class SellerService {
       this.logger.error(
         `SellerService:fetchSellers: ${JSON.stringify(error.message)}`,
       );
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async fetchSeller(payload: SellerPayload): Promise<Seller> {
+    try {
+      const seller = await this.sellerRepository.findByCondition({
+        where: {
+          name: payload.name,
+        },
+      });
+      if (!seller) {
+        throw new SellerNotFoundException();
+      }
+      return seller;
+    } catch (error) {
+      this.logger.error(
+        `SellerService:fetchSeller: ${JSON.stringify(error.message)}`,
+      );
+      if (error instanceof SellerNotFoundException) {
+        throw error;
+      }
       throw new InternalServerErrorException();
     }
   }

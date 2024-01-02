@@ -17,6 +17,9 @@ export class Dayoff {
   public type: DayoffType;
 
   @Column({ type: Number, nullable: true })
+  public month?: number | null;
+
+  @Column({ type: Number, nullable: true })
   public dayOfMonth: number | null;
 
   @Column({ type: Number, nullable: true })
@@ -28,4 +31,24 @@ export class Dayoff {
   @ManyToOne(() => Tour, (tour) => tour.dayoffs)
   @JoinColumn({ name: 'tourId', referencedColumnName: 'id' })
   public tour: Tour;
+
+  checkDayoff(givenDate: Date): boolean {
+    switch (this.type) {
+      case DayoffType.DATE:
+        if (
+          givenDate.getMonth() + 1 === this.month &&
+          givenDate.getDate() === this.date
+        ) {
+          return true;
+        }
+        break;
+      case DayoffType.WEEKLY:
+        if (givenDate.getDay() === this.dayOfWeek) {
+          return true;
+        }
+        break;
+    }
+
+    return false;
+  }
 }
