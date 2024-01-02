@@ -1,6 +1,6 @@
 import { IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
 import { pick } from 'lodash';
-import { DayoffDto } from 'src/dayoff/dto/dayoff.dto';
+import { DayoffDto } from '../../dayoff/dto/dayoff.dto';
 import { Type } from 'class-transformer';
 import { Tour } from '../entities/tour.entity';
 

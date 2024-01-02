@@ -1,5 +1,5 @@
-import { Dayoff } from 'src/dayoff/entities/dayoff.entity';
-import { DayoffType } from 'src/dayoff/types/dayoff_type';
+import { Dayoff } from '../../dayoff/entities/dayoff.entity';
+import { DayoffType } from '../../dayoff/types/dayoff_type';
 import { Tour } from '../entities/tour.entity';
 import { createTourFixture } from './tour.fixture';
 

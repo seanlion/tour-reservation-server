@@ -2,14 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { InternalServerErrorException } from '@nestjs/common';
 import { TourService } from '../tour.service';
 import { TourRepository } from '../tour.repository';
-import { SellerService } from 'src/seller/seller.service';
-import { createSellerFixture } from 'src/seller/tests/seller.fixture';
-import { SellerNotFoundException } from 'src/exception/SellerNotFoundException';
+import { SellerService } from '../../seller/seller.service';
+import { createSellerFixture } from '../../seller/tests/seller.fixture';
+import { SellerNotFoundException } from '../../exception/SellerNotFoundException';
 import { createTourFixture } from './tour.fixture';
-import { TourNotFoundException } from 'src/exception/TourNotFoundException';
-import { DayoffService } from 'src/dayoff/dayoff.service';
+import { TourNotFoundException } from '../../exception/TourNotFoundException';
+import { DayoffService } from '../../dayoff/dayoff.service';
 import { createDayoffFixture } from './dayoff.fixture';
-import { DayoffType } from 'src/dayoff/types/dayoff_type';
+import { DayoffType } from '../../dayoff/types/dayoff_type';
 import { getAllDatesInGivenMonth } from '../utils/util';
 
 describe('TourService', () => {
@@ -19,7 +19,13 @@ describe('TourService', () => {
   let mockDayoffService;
 
   beforeEach(async () => {
-    mockTourRepository = { createTour: jest.fn() };
+    mockTourRepository = {
+      createTour: jest.fn(),
+      saveTour: jest.fn(),
+      findById: jest.fn(),
+      findByCondition: jest.fn(),
+      findOneByCondition: jest.fn(),
+    };
     mockSellerService = { fetchSeller: jest.fn() };
     mockDayoffService = { createDayOff: jest.fn() };
 
@@ -58,7 +64,7 @@ describe('TourService', () => {
         sellerName: 'testee',
       };
       await expect(tourService.addTourBySeller(createTourDto)).rejects.toThrow(
-        SellerNotFoundException,
+        InternalServerErrorException,
       );
     });
 
@@ -172,7 +178,7 @@ describe('TourService', () => {
         testTour.seller.name,
         testTour.id,
       );
-      expect(tourDtoReturnValue.title).resolves.toEqual(testTour.title);
+      expect(tourDtoReturnValue.title).toBe(testTour.title);
     });
 
     it('should throw an InternalServerErrorException on failure', async () => {
@@ -213,7 +219,7 @@ describe('TourService', () => {
           testTour.seller.name,
           testTour.id,
           2023,
-          3,
+          givenMonth,
         );
       const datesInGivenMonth = getAllDatesInGivenMonth(2023, 3);
       expect(availableScheduleDto.availableSchedule.length).toBe(

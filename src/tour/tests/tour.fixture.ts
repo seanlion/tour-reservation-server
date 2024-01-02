@@ -1,5 +1,5 @@
 import { Tour } from '../entities/tour.entity';
-import { Seller } from 'src/seller/entities/seller.entity';
+import { Seller } from '../../seller/entities/seller.entity';
 
 export function createTourFixture(title: string = 'Test Tour'): Tour {
   const tour = new Tour();

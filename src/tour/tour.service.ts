@@ -5,15 +5,15 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { TourRepository } from './tour.repository';
-import { SellerService } from 'src/seller/seller.service';
+import { SellerService } from '../seller/seller.service';
 import {
   TourAvailableScheduleDto,
   TourCreateDto,
   TourDto,
 } from './dto/tour.dto';
-import { TourNotFoundException } from 'src/exception/TourNotFoundException';
-import { DayoffCreateDto } from 'src/dayoff/dto/dayoff.dto';
-import { DayoffService } from 'src/dayoff/dayoff.service';
+import { TourNotFoundException } from '../exception/TourNotFoundException';
+import { DayoffCreateDto } from '../dayoff/dto/dayoff.dto';
+import { DayoffService } from '../dayoff/dayoff.service';
 import { getAllDatesInGivenMonth } from './utils/util';
 
 @Injectable()
@@ -181,7 +181,7 @@ export class TourService {
       const dayoffsOfMonth = tour.dayoffs.filter((off) => off.month === month);
       const tourAvailableSchedule = dates.reduce(
         (availDates: number[], date) => {
-          return dayoffsOfMonth.every((off) => off.checkDayoff(date))
+          return dayoffsOfMonth.some((off) => off.checkDayoff(date))
             ? availDates
             : [...availDates, date.getDate()];
         },

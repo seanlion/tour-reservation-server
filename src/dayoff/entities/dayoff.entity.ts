@@ -48,7 +48,6 @@ export class Dayoff {
         }
         break;
     }
-
     return false;
   }
 }
