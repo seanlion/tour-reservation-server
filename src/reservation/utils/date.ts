@@ -1,4 +1,4 @@
-export function parseDateFromDateString(input: string): Date {
+export const parseDateFromDateString = (input: string): Date => {
   const parts = input.split('-');
   const date = new Date(
     Number(parts[0]),
@@ -6,7 +6,7 @@ export function parseDateFromDateString(input: string): Date {
     Number(parts[2]),
   );
   return date;
-}
+};
 
 export function getCurrentOnlyDateFormat(): Date {
   const currentDate = new Date();
