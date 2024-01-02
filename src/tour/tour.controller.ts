@@ -56,7 +56,6 @@ export class TourController {
 
   @Post('/seller/:tourId/addDayoff')
   async addTourDayoff(@Body() addDayoffDto: DayoffCreateDto): Promise<boolean> {
-    await this.tourService.addTourDayoff(addDayoffDto);
-    return;
+    return await this.tourService.addTourDayoff(addDayoffDto);
   }
 }
