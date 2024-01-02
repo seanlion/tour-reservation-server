@@ -1,4 +1,4 @@
-import { Reservation } from 'src/reservation/entities/reservation.entity';
+import { Reservation } from '../../reservation/entities/reservation.entity';
 import { Seller } from '../../seller/entities/seller.entity';
 import {
   Column,
@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Dayoff } from 'src/dayoff/entities/dayoff.entity';
+import { Dayoff } from '../../dayoff/entities/dayoff.entity';
 
 @Entity({ name: 'tours' })
 export class Tour {

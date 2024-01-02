@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { SellerRegisterDto, SellerDto } from './dto/seller.dto';
 import { SellerRepository } from './seller.repository';
-import { SellerNotFoundException } from 'src/exception/SellerNotFoundException';
+import { SellerNotFoundException } from '../exception/SellerNotFoundException';
 
 @Injectable()
 export class SellerService {

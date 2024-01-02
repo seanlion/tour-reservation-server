@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ReservationStatus } from '../types/status_enum';
-import { Tour } from 'src/tour/entities/tour.entity';
+import { Tour } from '../../tour/entities/tour.entity';
 
 @Entity({ name: 'reservations' })
 export class Reservation {

@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { DayoffType } from '../types/dayoff_type';
-import { Tour } from 'src/tour/entities/tour.entity';
+import { Tour } from '../../tour/entities/tour.entity';
 
 @Entity({ name: 'dayoffs' })
 export class Dayoff {
