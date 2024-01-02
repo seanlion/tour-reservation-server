@@ -72,7 +72,14 @@ export class TourService {
     try {
       // tour id로 엔티티 조회해서, 엔티티 없으면 dayoff 못 만듬. sellerName 안 맞으면 exception
       // dayoff 엔티티 만든 다음에 tour쪽에 추가
-      const tour = await this.tourRepository.findById(addDayoffDto.tourId);
+      const tour = await this.tourRepository.findOneByCondition({
+        relations: {
+          seller: true,
+        },
+        where: {
+          id: addDayoffDto.tourId,
+        },
+      });
       if (!tour) {
         throw new TourNotFoundException();
       }
