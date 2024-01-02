@@ -38,7 +38,9 @@ export class TourDto {
     const tourDto = new TourDto();
     Object.assign(tourDto, pick(tour, ['id', 'title']));
     tourDto.sellerName = tour.seller.name;
-    tourDto.dayoffs = tour.dayoffs.map((off) => DayoffDto.from(off));
+    if (tour.dayoffs) {
+      tourDto.dayoffs = tour.dayoffs.map((off) => DayoffDto.from(off));
+    }
     // TODO: reservation도 추가.
     if (availableSchedule) {
       tourDto.availableSchedulesByMonth = availableSchedule;
