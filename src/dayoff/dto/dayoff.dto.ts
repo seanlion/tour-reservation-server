@@ -1,6 +1,6 @@
 import { pick } from 'lodash';
 import { DayoffType } from '../types/dayoff_type';
-import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Dayoff } from '../entities/dayoff.entity';
 
 export class DayoffCreateDto {
@@ -21,6 +21,10 @@ export class DayoffCreateDto {
 
   @IsNumber()
   day?: number;
+
+  @IsOptional()
+  @IsNumber()
+  year?: number;
 }
 
 export class DayoffDto {

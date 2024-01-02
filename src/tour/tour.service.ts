@@ -16,6 +16,9 @@ import { DayoffCreateDto } from '../dayoff/dto/dayoff.dto';
 import { DayoffService } from '../dayoff/dayoff.service';
 import { getAllDatesInGivenMonth } from './utils/util';
 import { Tour } from './entities/tour.entity';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { Redis } from 'ioredis';
+import { Dayoff } from 'src/dayoff/entities/dayoff.entity';
 
 @Injectable()
 export class TourService {
@@ -23,6 +26,7 @@ export class TourService {
     private readonly tourRepository: TourRepository,
     private readonly sellerService: SellerService,
     private readonly dayOffService: DayoffService,
+    @InjectRedis() private readonly redis: Redis,
   ) {}
   private readonly logger = new Logger(TourService.name);
 
@@ -77,6 +81,12 @@ export class TourService {
       }
       // TODO : dayoff가 추가되면 availableSchedule 캐싱 데이터 갱신해야함.
       await this.dayOffService.createDayOff(addDayoffDto, tour);
+      await this.updateAvailableScheduleCache(
+        addDayoffDto.sellerName,
+        tour.id,
+        addDayoffDto.year,
+        addDayoffDto.month,
+      );
       return true;
     } catch (error) {
       this.logger.error(
@@ -90,6 +100,47 @@ export class TourService {
       }
       throw new InternalServerErrorException();
     }
+  }
+
+  private async updateAvailableScheduleCache(
+    sellerName: string,
+    tourId: number,
+    year: number,
+    month: number,
+  ) {
+    const tour = await this.tourRepository.findOneByCondition({
+      relations: {
+        seller: true,
+        dayoffs: true,
+        reservations: true,
+      },
+      where: {
+        seller: {
+          name: sellerName,
+        },
+        id: tourId,
+        // TODO: 여기서 바로 dayoff를 필터링 가능?
+      },
+    });
+    const tourAvailableSchedule = this.calculateAvailableSchedule(
+      year,
+      month,
+      tour.dayoffs,
+    );
+    const cacheKey = `SCHEDULE:${tourId}:${year}:${month}`;
+    const value = {
+      tourId: tourId,
+      tourTitle: tour.title,
+      year: year,
+      month: month,
+      availableSchedule: tourAvailableSchedule,
+    } as TourAvailableScheduleDto;
+    await this.redis.set(
+      cacheKey,
+      JSON.stringify(value),
+      'EX',
+      60 * 60 * 24 * 3,
+    );
   }
 
   async findTourWithReservationsAndDayoffs(tourId: number): Promise<Tour> {
@@ -168,11 +219,14 @@ export class TourService {
     year: number,
     month: number,
   ): Promise<TourAvailableScheduleDto> {
-    /* 예약 가능 조건
-        1.휴일이 아니어야함.
-        2.해당 일에 예약이 5개 미만이어야 함.
-    */
     try {
+      // cache hit 확인
+      const cacheKey = `SCHEDULE:${tourId}:${year}:${month}`;
+      const cachedValue = await this.redis.get(cacheKey);
+      if (cachedValue) {
+        return JSON.parse(cachedValue) as TourAvailableScheduleDto;
+      }
+
       const tour = await this.tourRepository.findOneByCondition({
         relations: {
           seller: true,
@@ -187,27 +241,10 @@ export class TourService {
           // TODO: 여기서 바로 dayoff를 필터링 가능?
         },
       });
-      // 선택한 연도와 월을 가지고, 그 월의 (그 tour의) dayoff를 가지고 와야 함.
-      /*
-           예를 들어 2023년 3월이 인자이면,
-           2023.03의 모든 날짜를 구한다.(30개인지, 31개인지)
-           month가 3인 dayoff 데이터들을 가지고 오고, 
-           만약 데이터가 3개 있다.
-           1. dayOfWeek : 0(Sun), 6(Sat)
-           2. date: 16일
-   
-           이러면 2023.03의 TourAvailableSchedule은 
-           일요일과, 토요일을 제외하고, 16일을 제외한 3월의 모든 일자를 리턴해야 함.
-        */
-      const dates = getAllDatesInGivenMonth(year, month);
-      const dayoffsOfMonth = tour.dayoffs.filter((off) => off.month === month);
-      const tourAvailableSchedule = dates.reduce(
-        (availDates: number[], date) => {
-          return dayoffsOfMonth.some((off) => off.checkDayoff(date))
-            ? availDates
-            : [...availDates, date.getDate()];
-        },
-        [],
+      const tourAvailableSchedule = this.calculateAvailableSchedule(
+        year,
+        month,
+        tour.dayoffs,
       );
       return TourAvailableScheduleDto.from(
         tour,
@@ -215,7 +252,6 @@ export class TourService {
         month,
         tourAvailableSchedule,
       );
-      // TODO : 3월의 예약 5개 이상인 날을 보고, 그 날들을 제외해야 함.
     } catch (error) {
       this.logger.error(
         `TourService:fetchAvailableScheduleByTour(
@@ -223,5 +259,20 @@ export class TourService {
       );
       throw new InternalServerErrorException();
     }
+  }
+
+  private calculateAvailableSchedule(
+    year: number,
+    month: number,
+    dayoffs: Dayoff[],
+  ): number[] {
+    const dates = getAllDatesInGivenMonth(year, month);
+    const dayoffsOfMonth = dayoffs.filter((off) => off.month === month);
+    const tourAvailableSchedule = dates.reduce((availDates: number[], date) => {
+      return dayoffsOfMonth.some((off) => off.checkDayoff(date))
+        ? availDates
+        : [...availDates, date.getDate()];
+    }, []);
+    return tourAvailableSchedule;
   }
 }
