@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { SellerModule } from './seller/seller.module';
 import { TourModule } from './tour/tour.module';
 import { DayoffModule } from './dayoff/dayoff.module';
+import { ReservationModule } from './reservation/reservation.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { DayoffModule } from './dayoff/dayoff.module';
     SellerModule,
     TourModule,
     DayoffModule,
+    ReservationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
