@@ -28,7 +28,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
         password: 'root',
         database: 'tour',
         entities: [__dirname + '/**/*.entity.{js,ts}'],
-        synchronize: true,
+        synchronize: false,
         logging: true,
       }),
     }),
